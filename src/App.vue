@@ -2,13 +2,13 @@
   <div id="app">
     <!-- <div id="nav"><router-link to="/">Home</router-link> |</div>
     <router-view /> -->
-    <div class="main-container">
+    <div :class="isDayMode ? 'main-container ' : 'main-container darkMode'">
       <header>
         <span class="title">Where in the world?</span>
 
-        <p class="container-mode">
-          <span v-if="isDayMode" class="day"><i class="fas fa-moon"></i></span>
-          <span v-if="!isDayMode" class="night"
+        <p class="container-mode" @click="changeDisplayMode">
+          <span v-if="!isDayMode" class="day"><i class="fas fa-moon"></i></span>
+          <span v-if="isDayMode" class="night"
             ><i class="far fa-moon"></i
           ></span>
           Dark Mode
@@ -22,21 +22,75 @@
               type="text"
               placeholder="search for a country ..."
               value=""
+              v-model="nameCountries"
+              @keyup="getValueInput()"
             />
           </form>
 
           <div class="container-router-link">
             <div>
-              <b-dropdown id="dropdown-1" text="Dropdown Button" class="m-md-2">
-                <b-dropdown-item>First Action</b-dropdown-item>
-                <b-dropdown-item>Second Action</b-dropdown-item>
-                <b-dropdown-item>Third Action</b-dropdown-item>
+              <b-dropdown
+                id="dropdown-1"
+                text="Filter by Region"
+                class="m-md-2"
 
+              >
+                <b-dropdown-item
+                  ><router-link
+                    class="router-link"
+                    :to="{
+                      name: 'CountriesByRegion',
+                      params: { regionName: 'africa' },
+                    }"
+                    >Africa</router-link
+                  >
+                </b-dropdown-item>
+                <b-dropdown-item
+                  ><router-link
+                    class="router-link"
+                    :to="{
+                      name: 'CountriesByRegion',
+                      params: { regionName: 'america' },
+                    }"
+                    >America</router-link
+                  >
+                </b-dropdown-item>
+                <b-dropdown-item
+                  ><router-link
+                    class="router-link"
+                    :to="{
+                      name: 'CountriesByRegion',
+                      params: { regionName: 'asia' },
+                    }"
+                    >Asia</router-link
+                  >
+                </b-dropdown-item>
+                <b-dropdown-item
+                  ><router-link
+                    class="router-link"
+                    :to="{
+                      name: 'CountriesByRegion',
+                      params: { regionName: 'europe' },
+                    }"
+                    >Europe</router-link
+                  ></b-dropdown-item
+                >
+                <b-dropdown-item
+                  ><router-link
+                    class="router-link"
+                    :to="{
+                      name: 'CountriesByRegion',
+                      params: { regionName: 'oceania' },
+                    }"
+                    >Oceania</router-link
+                  >
+                </b-dropdown-item>
               </b-dropdown>
             </div>
           </div>
         </div>
-        <div class="container-grid">
+        <router-view :key="$route.path" />
+        <!-- <div class="container-grid">
           <div
             v-for="(item, index) in response"
             :class="'grid-item grid-item' + index + 1"
@@ -53,7 +107,7 @@
               <p class="details"><span>Capital:</span>{{ item.capital[0] }}</p>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- <p>{{ responseBis }}</p> -->
@@ -62,43 +116,65 @@
 
 <script>
 import axios from "axios";
-
+// import { mapActions } from "vuex";
 export default {
   name: "App",
 
   data() {
     return {
-      response: null,
-      responseBis: null,
+      nameCountries: null,
       isDayMode: true,
-      options: ["A", "B", "C"],
-      value: "B",
     };
   },
 
-  mounted() {
-    let countries = null;
+  beforeCreate() {
+    let countriesRegion = null;
+    let countriesRegionBis = {
+      africa: null,
+      america: null,
+      asia: null,
+      europe: null,
+      oceania: null,
+    };
+    axios.get("https://restcountries.com/v3.1/region/africa").then((res) => {
+      countriesRegion = res.data;
+      countriesRegionBis.africa = countriesRegion.slice(0, 8);
+      console.log("countries", countriesRegion.slice(0, 6));
+    });
+    axios.get("https://restcountries.com/v3.1/region/america").then((res) => {
+      countriesRegion = res.data;
+      countriesRegionBis.america = countriesRegion.slice(0, 8);
+      console.log("countries", countriesRegion.slice(0, 6));
+    });
+    axios.get("https://restcountries.com/v3.1/region/asia").then((res) => {
+      countriesRegion = res.data;
+      countriesRegionBis.asia = countriesRegion.slice(0, 8);
+      console.log("countries", countriesRegion.slice(0, 6));
+    });
     axios.get("https://restcountries.com/v3.1/region/europe").then((res) => {
-      countries = res.data;
-      this.responseBis = countries.slice(0, 1);
-      this.response = countries.slice(0, 8);
-      console.log("countries", countries.slice(0, 6));
+      countriesRegion = res.data;
+      countriesRegionBis.europe = countriesRegion.slice(0, 8);
+      console.log("countries", countriesRegion.slice(0, 6));
+    });
+    axios.get("https://restcountries.com/v3.1/region/oceania").then((res) => {
+      countriesRegion = res.data;
+      countriesRegionBis.oceania = countriesRegion.slice(0, 8);
+      console.log("countries", countriesRegion.slice(0, 6));
+      this.$store.dispatch("updateCountries", countriesRegionBis);
     });
   },
 
-  // computed: {
-  //   getLimitCountries() {
-  //     let countries = null;
-  //     setTimeout(
-  //       function () {
-  //         countries = this.response.splice(6);
-  //       }.bind(this),
-  //       500
-  //     );
+  methods: {
+    // ...mapActions(["updateCountries",'getnameUseToFilter']),
 
-  //     return countries;
-  //   },
-  // },
+    getValueInput() {
+      this.$store.dispatch("updateNameUseToFilter", this.nameCountries);
+    },
+
+    changeDisplayMode() {
+      this.isDayMode = !this.isDayMode;
+    },
+  },
 };
 </script>
 <style lang="scss">
@@ -126,12 +202,21 @@ export default {
     header {
       display: flex;
       justify-content: space-between;
-      width: 90%;
+      align-items: center;
+      width: 100%;
       height: 50px;
 
       .title {
         font-size: 20px;
         font-weight: bold;
+        padding-left: 20px;
+      }
+      .container-mode {
+        display: inline-flex;
+        width: 125px;
+        // border: 2px solid;
+        margin: 0 20px;
+        justify-content: space-evenly;
       }
       .container-mode:hover {
         cursor: url("data:image/x-icon;base64,AAACAAEAICACAAAAAAAwAQAAFgAAACgAAAAgAAAAQAAAAAEAAQAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/gAAAf4AAAPVAAAH1QAAB9WAAA3VgAAd/4AAGbaAAAG2gAABtgAAAYAAAAGAAAABgAAAAYAAAAAAAAA//////////////////////////////////////////////////////////////////////////////////////gD///4A///8AP//+AB///AAf//wAD//4AA//8AAP//AAD//5AA///wAf//8Af///D////w////8P////n///8="),
@@ -156,7 +241,7 @@ export default {
         .search-container {
           border: 1px solid rgb(224, 222, 222);
           box-shadow: 5px rgba(0, 0, 0, 0.2);
-          width: 200px;
+          width: 230px;
           background-color: white;
           border-radius: 5px;
           height: 40px;
@@ -175,7 +260,16 @@ export default {
           input {
             border: none;
             width: 80%;
+            min-width: 150px;
             outline: none;
+          }
+        }
+        #dropdown-1 {
+          // background-color: white !important;
+          * {
+
+            text-decoration: none;
+            color:gray;
           }
         }
       }
@@ -192,7 +286,7 @@ export default {
           display: flex;
           flex-direction: column;
           width: 250px;
-          height: 300px;
+          min-height: 300px;
           margin: 0 auto;
           border-radius: 10px;
           // padding:5px;
@@ -227,6 +321,12 @@ export default {
           }
         }
       }
+    }
+  }
+  .darkMode {
+    header {
+      color: white !important;
+      background-color: rgb(43, 55, 67) !important;
     }
   }
 }
