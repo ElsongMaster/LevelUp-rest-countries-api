@@ -1,33 +1,61 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    countries:null,
-    nameUseToFilter:null
+    countriesByRegion: null,
+    allCountries: null,
+    nameUseToFilter: null,
+    countryToDisplay:null,
+    borderCountries:null
   },
   mutations: {
-      getAllCountries(state,countries){
-        state.countries = countries;
-      },
-      getnameUseToFilter(state,nameUseToFilter){
-        state.nameUseToFilter = nameUseToFilter;
-      }
+    setAllCountries(state, allCountries) {
+      state.allCountries = allCountries;
+    },
+    setCountriesByRegion(state, countriesByRegion) {
+      state.countriesByRegion = countriesByRegion;
+    },
+    setNameUseToFilter(state, nameUseToFilter) {
+      state.nameUseToFilter = nameUseToFilter;
+    },
+    getRoutName(state, routeName) {
+      console.log("routeName", routeName);
+      state.isRouteDetails = routeName.includes("details");
+    },
+    
+    setCountryToDisplay(state,countryToDisplay){
+        state.countryToDisplay = countryToDisplay;
+    },
+    setBorderCountries(state,countryToDisplay){
+        state.countryToDisplay = countryToDisplay;
+    }
   },
   actions: {
-    updateCountries({commit}, countriesByRegion){
-      commit("getAllCountries",countriesByRegion)
+    updateAllCountries({ commit }, allCountries) {
+      commit("setAllCountries", allCountries);
+    },  
+
+    updateCountriesByRegion({ commit }, countriesByRegion) {
+      commit("setCountriesByRegion", countriesByRegion);
     },
-    updateNameUseToFilter({commit}, nameUseToFilter){
-      commit("getnameUseToFilter",nameUseToFilter)
-    }
+
+    updateNameUseToFilter({ commit }, nameUseToFilter) {
+      commit("setNameUseToFilter", nameUseToFilter);
+    },
+    updateIsRouteDetails({ commit }, routeName) {
+      commit("getRoutName", routeName);
+    },
+    updateCountryToDisplay({ commit }, countryToDisplay) {
+      commit("setCountryToDisplay", countryToDisplay);
+    },
+    updateBorderCountries({ commit }, countryToDisplay) {
+      commit("setCountryToDisplay", countryToDisplay);
+    },
 
     
   },
-  modules: {
-  }
-})
-
-
+  modules: {},
+});
