@@ -1,38 +1,55 @@
 <template>
-  <div class="container-grid">
-    <div
-      v-for="(item, index) in pageOfItems"
-      :class="'grid-item grid-item' + index + 1"
-      :key="index"
-    >
-      <router-link
-        class="router-link-details"
-        :to="{
-          path: '/:regionName/:countryName',
-          name: 'DetailsCountry',
-          params: {
-            regionName: item.region.toLowerCase(),
-            countryName: item.name.common.toLowerCase(),
-          },
-        }"
-        v-on:click.native="sendCountryToDisplay(item.name.common)"
+  <div style="width: 90%">
+    <div class="container-grid" v-if="getCountriesFiltred.length > 0">
+      <div
+        v-for="(item, index) in pageOfItems"
+        :class="'grid-item grid-item' + index + 1"
         :key="index"
       >
-      </router-link>
+        <router-link
+          class="router-link-details"
+          :to="{
+            path: '/:regionName/:countryName',
+            name: 'DetailsCountry',
+            params: {
+              regionName: item.region.toLowerCase(),
+              countryName: item.name.common.toLowerCase(),
+            },
+          }"
+          v-on:click.native="sendCountryToDisplay(item.name.common)"
+          :key="index"
+        >
+        </router-link>
 
-      <img :src="item.flags[1]" :alt="item.name.common" />
-      <div class="container-text">
-        <p class="name-country">{{ item.name.common }}</p>
-        <p class="details"><span>Population:</span>{{ item.population }}</p>
-        <p class="details"><span>Region:</span> {{ item.region }}</p>
-        <p class="details"><span>Capital:</span>{{ item.capital }}</p>
+        <img :src="item.flags[1]" :alt="item.name.common" />
+        <div class="container-text">
+          <p class="name-country">{{ item.name.common }}</p>
+          <p class="details"><span>Population:</span>{{ item.population }}</p>
+          <p class="details"><span>Region:</span> {{ item.region }}</p>
+          <p class="details"><span>Capital:</span>{{ item.capital[0] }}</p>
+        </div>
       </div>
+      <jw-pagination
+        v-if="getCountriesFiltred.length > 0"
+        :items="getCountriesFiltred"
+        :pageSize="8"
+        @changePage="onChangePage"
+        style="position: absolute; bottom: 5vh; left: 40%"
+      ></jw-pagination>
     </div>
-    <jw-pagination
-      :items="getCountriesFiltred"
-      :pageSize="8"
-      @changePage="onChangePage"
-    ></jw-pagination>
+    <div
+      v-if="getCountriesFiltred.length == 0"
+      style="
+        height: 90vh;
+        width: 90vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+      "
+    >
+      <p style="color: gray">Aucun résultat trouvé</p>
+    </div>
   </div>
 </template>
 

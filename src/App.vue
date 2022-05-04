@@ -264,24 +264,21 @@ body {
             }
           }
           #dropdown-1 {
-            // background-color: white !important;
             * {
               text-decoration: none;
               color: rgb(184, 178, 178);
-
             }
           }
         }
         .container-grid {
           display: grid;
           width: 90%;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(8, 1fr);
           grid-gap: 40px;
           grid-auto-rows: minmax(200px, auto);
           margin-top: 40px;
 
           .grid-item {
-            // border: 2px solid;
             display: flex;
             flex-direction: column;
             width: 250px;
@@ -289,7 +286,6 @@ body {
             margin: 0 auto;
             border-radius: 10px;
             position: relative;
-            // padding:5px;
             .router-link-details {
               text-decoration: none !important;
               position: absolute;
